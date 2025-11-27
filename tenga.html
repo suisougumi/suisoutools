@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天河組ホームページ</title>
+
+  <style>
+    body { margin: 0; padding: 0; font-family: sans-serif; background: #ffffff; }
+
+    .toggle-btn {
+      position: fixed;
+      left: 10px;
+      top: 10px;
+      background: #4a4aff;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 1001;
+      user-select: none;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 200px;
+      height: 100%;
+      background: #ffffff;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ccc;
+      transform: translateX(0);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.closed { transform: translateX(-220px); }
+
+    .sidebar ul { list-style: none; padding: 0; margin: 50px 0 0 0; }
+    .sidebar li { display: flex; align-items: center; margin: 18px 0; font-size: 18px; }
+
+    .dot {
+      width: 15px; height: 15px;
+      margin-right: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .pink { background: #f4b5c0; }
+    .green { background: #00ff00; }
+    .cyan { background: #00e6ff; }
+    .blue { background: #0077ff; }
+    .deepblue { background: #232c89; }
+    .purpleblue { background: #6641ff; }
+    .purple { background: #cc30ff; }
+
+    .sidebar a { text-decoration: none; color: #0000cc; }
+    .sidebar a:hover { text-decoration: underline; }
+
+    .main {
+      margin-left: 220px;
+      padding: 20px;
+      transition: margin-left 0.3s;
+    }
+
+    .main.shifted { margin-left: 20px; }
+
+    .header-image {
+      width: 100%;
+      max-width: 900px;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="toggle-btn" onclick="toggleSidebar()">≡ メニュー</div>
+
+<div class="sidebar" id="sidebar">
+  <ul>
+    <li><span class="dot green"></span><a href="akej.html">AKEJ部</a></li>
+    <li><span class="dot cyan"></span><a href="index.html">翠颯組</a></li>
+  </ul>
+</div>
+
+<div class="main" id="main">
+
+  <img src="tenga.png" class="header-image" alt="tenga group">
+
+  <h1>天河組 - TENGAGROUP</h1>
+
+  <p>
+    工事中
+  </p>
+
+</div>
+
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const main = document.getElementById("main");
+
+  sidebar.classList.toggle("closed");
+  main.classList.toggle("shifted");
+}
+</script>
+
+</body>
+</html>
