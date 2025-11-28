@@ -1,91 +1,170 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AKEJ部ホームページ</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKEJ部ホームページ</title>
 
-  <style>
-    body { margin: 0; padding: 0; font-family: sans-serif; background: #ffffff; }
+<style>
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --subtext: #333333;
+  --link: #0066cc;
+  --link-hover: #004499;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #cccccc;
+  --button-bg: #eeeeee;
+  --button-text: #000000;
+  --button-border: #000000;
+}
 
-    .toggle-btn {
-      position: fixed;
-      left: 10px;
-      top: 10px;
-      background: #4a4aff;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 1001;
-      user-select: none;
-    }
+[data-theme="dark"] {
+  --bg: #000000;
+  --text: #e0e0e0;
+  --subtext: #cfcfcf;
+  --link: #b8e8ff;
+  --link-hover: #e5f8ff;
+  --sidebar-bg: #0a0a0a;
+  --sidebar-border: #222222;
+  --button-bg: #111111;
+  --button-text: #ffffff;
+  --button-border: #ffffff;
+}
 
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 200px;
-      height: 100%;
-      background: #ffffff;
-      padding: 20px;
-      box-sizing: border-box;
-      border-right: 1px solid #ccc;
-      transform: translateX(0);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
-    .sidebar.closed { transform: translateX(-220px); }
+.toggle-btn {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1001;
+}
 
-    .sidebar ul { list-style: none; padding: 0; margin: 50px 0 0 0; }
-    .sidebar li { display: flex; align-items: center; margin: 18px 0; font-size: 18px; }
+.toggle-theme-btn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 2000;
+}
 
-    .dot {
-      width: 15px; height: 15px;
-      margin-right: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: var(--sidebar-bg);
+  padding: 20px;
+  border-right: 1px solid var(--sidebar-border);
+  box-sizing: border-box;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
 
-    .pink { background: #f4b5c0; }
-    .green { background: #00ff00; }
-    .cyan { background: #00e6ff; }
+.sidebar.closed {
+  transform: translateX(-220px);
+}
 
-    .sidebar a { text-decoration: none; color: #0000cc; }
-    .sidebar a:hover { text-decoration: underline; }
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 50px 0 0 0;
+}
 
-    /* 今いるページを強調（AKEJ） */
-    .active {
-      font-weight: bold;
-      color: #3333ff !important;
-    }
+.sidebar li {
+  display: flex;
+  align-items: center;
+  margin: 18px 0;
+  font-size: 18px;
+}
 
-    .main {
-      margin-left: 220px;
-      padding: 20px;
-      transition: margin-left 0.3s;
-    }
+.dot {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
 
-    .main.shifted { margin-left: 20px; }
+.pink { background: #f4b5c0; }
+.green { background: #00ff00; }
+.cyan  { background: #00e6ff; }
 
-    .header-image {
-      width: 100%;
-      max-width: 900px;
-      display: block;
-      margin: 0 auto 20px auto;
-    }
-  </style>
+.sidebar a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  text-decoration: underline;
+}
+
+.active {
+  font-weight: bold;
+  color: #3333ff !important;
+}
+
+.main {
+  margin-left: 220px;
+  padding: 20px;
+  transition: margin-left 0.3s;
+  color: var(--subtext);
+}
+
+.main.shifted {
+  margin-left: 20px;
+}
+
+.header-image {
+  width: 100%;
+  max-width: 900px;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+p {
+  line-height: 1.7;
+  color: var(--subtext);
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+</style>
 </head>
 
 <body>
 
 <div class="toggle-btn" onclick="toggleSidebar()">≡ メニュー</div>
+<div class="toggle-theme-btn" onclick="toggleTheme()">ライトダーク切り替え</div>
 
 <div class="sidebar" id="sidebar">
   <ul>
     <li><span class="dot pink"></span><a href="tenga.html">天河組</a></li>
- </li>
     <li><span class="dot cyan"></span><a href="index.html">翠颯組</a></li>
   </ul>
 </div>
@@ -98,36 +177,20 @@
 
   <p>
     ここは基本フレンドリーで、普通に話してくれる人にはこちらも優しく対応する雑談オプチャです。<br>
-    日常の話、暇つぶし、どうでもいい話、なんでも気軽にどうぞ。<br>
-    ゆるめの空気が好きな人向けです。<br>
-    <br>
+    日常の話、暇つぶし、どうでもいい話、なんでも気軽にどうぞ。<br><br>
 
-    でも大事なのはここから。<br>
-    うちは「仲良くやりたい人には優しく、敵意を向けてくる人にはそれなりに返す」というスタンスです。<br>
-    <br>
+    うちは「仲良くやりたい人には優しく、敵意を向けてくる人にはそれなりに返す」というスタンスです。<br><br>
 
-    ・普通に接しているのに急に敵対してくる<br>
-    ・無駄に攻撃的<br>
-    ・喧嘩腰で絡んでくる<br>
-    ・荒らし目的や迷惑行為<br>
-    <br>
+    ・急に敵対してくる<br>
+    ・攻撃的・喧嘩腰<br>
+    ・荒らし・迷惑行為<br><br>
 
-    こういう相手には、こちらも遠慮なく“強めの対処”をします。<br>
-    無駄にトラブルを背負う必要はないので、態度は相手に合わせます。<br>
-    ただし、必要以上に荒れさせる気はないのでそこは安心を。<br>
-    <br>
-
-    逆に、普通に話してくれる人にはしっかりフレンドリーに接します。<br>
-    基本はまったり、でも来るもの拒まず・害あるものにはきっちり対応、そんなバランスです。<br>
-    <br>
-
-    雑談は自由。流れに乗ってもいいし、気が向いた時だけ喋ってもOK。<br>
-    「居心地いいな」と思ったら、そのまま気楽にいてください。<br>
-    <br>
+    こういう相手には遠慮なく対処します。<br>
+    普通に接する人にはしっかりフレンドリー。<br>
+    そんなバランスを大切にしている場所です。<br><br>
 
     所属マーク：۞𝒜<br>
-    オープンチャットリンク：<br>
-    <a href="https://line.me/ti/g2/qLcD8nkrcpdGCF2xo2igv92jB9FrKIVm3WdQdg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank">
+    <a href="https://line.me/ti/g2/qLcD8nkrcpdGCF2xo2igv92jB9FrKIVm3WdQdg" target="_blank">
       AKEJ部 オプチャリンク
     </a>
   </p>
@@ -138,10 +201,23 @@
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
   const main = document.getElementById("main");
-
   sidebar.classList.toggle("closed");
   main.classList.toggle("shifted");
 }
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  if (current === "dark") {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+const saved = localStorage.getItem("theme") || "light";
+document.documentElement.setAttribute("data-theme", saved);
 </script>
 
 </body>
