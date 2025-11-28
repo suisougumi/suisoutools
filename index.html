@@ -1,72 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>翠颯組ホームページ</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suisou Tools</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      background: #ffffff;
-    }
+<style>
+#opening {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 3rem;
+    font-family: "Arial Black", sans-serif;
+    letter-spacing: 4px;
+    z-index: 9999;
+    opacity: 1;
+    animation: fadeOut 2s ease forwards;
+    animation-delay: 2s;
+}
 
-    /* 開閉ボタン */
-    .toggle-btn {
-      position: fixed;
-      left: 10px;
-      top: 10px;
-      background: #4a4aff;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 1001;
-      user-select: none;
-    }
+#opening span {
+    animation: popIn 1.2s ease forwards;
+    opacity: 0;
+    transform: scale(0.8);
+}
 
-    /* サイドバー（白） */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 200px;
-      height: 100%;
-      background: #ffffff;
-      padding: 20px;
-      box-sizing: border-box;
-      border-right: 1px solid #ccc;
-      transform: translateX(0);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
 
-    .sidebar.closed {
-      transform: translateX(-220px);
-    }
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
 
-    /* =========================================
-   ライト & ダークテーマの切り替えCSS
-========================================= */
+#content {
+    opacity: 0;
+    animation: showContent 1s ease forwards;
+    animation-delay: 3s;
+}
 
-/* 基本（ライトモード） */
+@keyframes showContent {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 :root {
   --bg: #ffffff;
   --text: #000000;
   --subtext: #333333;
   --link: #0066cc;
   --link-hover: #004499;
-  --sidebar-bg: #f5f5f5;
+  --sidebar-bg: #ffffff;
   --sidebar-border: #cccccc;
   --button-bg: #eeeeee;
   --button-text: #000000;
   --button-border: #000000;
 }
 
-/* ここがダークモード */
 [data-theme="dark"] {
   --bg: #000000;
   --text: #e0e0e0;
@@ -80,44 +79,27 @@
   --button-border: #ffffff;
 }
 
-
-
 body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
   background: var(--bg);
   color: var(--text);
-  font-family: sans-serif;
-  margin: 0;
 }
 
-h1, h2, h3 {
-  color: var(--text);
+.toggle-btn {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1001;
+  user-select: none;
 }
-
-p {
-  color: var(--subtext);
-}
-
-a {
-  color: var(--link);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--link-hover);
-}
-
-
-.sidebar {
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--sidebar-border);
-  color: var(--text);
-}
-
-
-.sidebar a {
-  color: var(--text);
-}
-
 
 .toggle-theme-btn {
   position: fixed;
@@ -133,122 +115,152 @@ a:hover {
   user-select: none;
 }
 
-    
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      margin-top: 50px;
-    }
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: var(--sidebar-bg);
+  padding: 20px;
+  box-sizing: border-box;
+  border-right: 1px solid var(--sidebar-border);
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
 
-    .sidebar li {
-      display: flex;
-      align-items: center;
-      margin: 18px 0;
-      font-size: 18px;
-    }
+.sidebar.closed {
+  transform: translateX(-220px);
+}
 
-    .dot {
-      width: 15px;
-      height: 15px;
-      margin-right: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 50px 0 0 0;
+}
 
-    .pink { background: #f4b5c0; }
-    .green { background: #00ff00; }
-    .cyan { background: #00e6ff; }
-    .blue { background: #0077ff; }
-    .deepblue { background: #232c89; }
-    .purpleblue { background: #6641ff; }
-    .purple { background: #cc30ff; }
+.sidebar li {
+  display: flex;
+  align-items: center;
+  margin: 18px 0;
+  font-size: 18px;
+}
 
-    .sidebar a {
-      text-decoration: none;
-      color: #0000cc;
-    }
+.dot {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
 
-    .sidebar a:hover {
-      text-decoration: underline;
-    }
+.pink { background: #f4b5c0; }
+.green { background: #00ff00; }
+.cyan  { background: #00e6ff; }
+.blue  { background: #0077ff; }
+.deepblue { background: #232c89; }
+.purpleblue { background: #6641ff; }
+.purple { background: #cc30ff; }
 
-    .main {
-      margin-left: 220px;
-      padding: 20px;
-      transition: margin-left 0.3s;
-    }
+.sidebar a {
+  color: var(--text);
+  text-decoration: none;
+}
 
-    .main.shifted {
-      margin-left: 20px;
-    }
+.sidebar a:hover {
+  text-decoration: underline;
+}
 
-    .header-image {
-      width: 100%;
-      max-width: 900px;
-      display: block;
-      margin: 0 auto 20px auto;
-    }
-  </style>
+.main {
+  margin-left: 220px;
+  padding: 20px;
+  transition: margin-left 0.3s;
+}
+
+.main.shifted {
+  margin-left: 20px;
+}
+
+.header-image {
+  width: 100%;
+  max-width: 900px;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+p {
+  color: var(--subtext);
+  line-height: 1.7;
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+</style>
 </head>
 
 <body>
 
-  <!-- 開閉ボタン -->
-  <div class="toggle-btn" onclick="toggleSidebar()">≡ メニュー</div>
+<div id="opening">
+    <span>Suisou Tools</span>
+</div>
 
-  <!-- サイドバー -->
-  <div class="sidebar" id="sidebar">
-    <ul>
-      <li><span class="dot pink"></span><a href="akej.html">AKEJ部</a></li>
-      <li><span class="dot green"></span><a href="tenga.html">天河組</a></li>
-      <li><span class="dot cyan"></span><a href="#">工事中</a></li>
-      <li><span class="dot blue"></span><a href="#">工事中</a></li>
-      <li><span class="dot deepblue"></span><a href="#">工事中</a></li>
-      <li><span class="dot purpleblue"></span><a href="#">工事中</a></li>
-      <li><span class="dot purple"></span><a href="#">工事中</a></li>
-    </ul>
-  </div>
+<div id="content">
 
-<div class="toggle-theme-btn" onclick="toggleTheme()">ライトダーク切り替え</div>
+<div class="toggle-btn" onclick="toggleSidebar()">≡ メニュー</div>
+<div class="toggle-theme-btn" onclick="toggleTheme()">🌓</div>
 
-  
-  <!-- メイン -->
-  <div class="main" id="main">
-    <img src="dantaigakirinuki.png" class="header-image" alt="Suisou group">
-    <h1>翠颯組 - Suisou group</h1>
+<div class="sidebar" id="sidebar">
+  <ul>
+    <li><span class="dot pink"></span><a href="akej.html">AKEJ部</a></li>
+    <li><span class="dot green"></span><a href="tenga.html">天河組</a></li>
+    <li><span class="dot cyan"></span><a href="#">工事中</a></li>
+    <li><span class="dot blue"></span><a href="#">工事中</a></li>
+    <li><span class="dot deepblue"></span><a href="#">工事中</a></li>
+    <li><span class="dot purpleblue"></span><a href="#">工事中</a></li>
+    <li><span class="dot purple"></span><a href="#">工事中</a></li>
+  </ul>
+</div>
 
-    <p>
-      このオープンチャットは、気軽に参加できる雑談中心のコミュニティとして運営されています。日常の何気ない話題から、ちょっとした情報交換、荒らし依頼まで、幅広く受け止められる柔らかな雰囲気が特徴です。特定のテーマや専門的な知識を必要としないため、「話し相手がほしい」「暇つぶしに誰かと雑談したい」「とりあえず入って様子を見たい」「オープンチャットの荒らし依頼をしたい」といった、どなたでも気軽に足を運べる場所となっています。<br><br>
+<div class="main" id="main">
+  <img src="dantaigakirinuki.png" class="header-image">
+
+  <h1>翠颯組 - Suisou group</h1>
+
+  <p>
+             このオープンチャットは、気軽に参加できる雑談中心のコミュニティとして運営されています。日常の何気ない話題から、ちょっとした情報交換、荒らし依頼まで、幅広く受け止められる柔らかな雰囲気が特徴です。特定のテーマや専門的な知識を必要としないため、「話し相手がほしい」「暇つぶしに誰かと雑談したい」「とりあえず入って様子を見たい」「オープンチャットの荒らし依頼をしたい」といった、どなたでも気軽に足を運べる場所となっています。<br><br>
      雑談がメインであることから、会話の入り口は常に開かれており、初めての方でもすぐに溶け込めるような空気感を大切にしています。挨拶だけでも歓迎され、ちょっとしたつぶやき程度でも自然に話題が広がるため、「何を話せばいいかわからない」という方でも気負わず参加できます。既存のメンバー同士もフラットな関係で交流しているため、特別なルールや堅苦しい雰囲気もなく、どなたでも安心して入れるコミュニティです。<br><br>
      また、雑談を中心としつつも、オープンチャットの情報共有や、ちょっとした質問・相談への回答なども歓迎しているため、ただの「おしゃべりの場」を超えて、適度に実用的な情報も飛び交う場になっています。バズっているネタ、趣味の話、面白かった出来事など、扱うジャンルは多岐にわたり、何気ない一言がきっかけで新しい話題が広がることもしばしばです。<br><br>
       コミュニティ運営としては、誰でも入りやすく居心地のよい関係性づくりを重視しています。たまたま立ち寄った人でも気楽に参加でき、長く居たい人は自然に馴染めるような、縛りすぎない適度なゆるさを心がけています。チャットを追えない時や静かに参加したい時も無理をする必要はなく、好きなタイミングで気軽に発言できるスタイルを推奨しています。<br><br>
      「荒らし依頼をしたい」「雑談できる場所がほしい」「アットホームなコミュニティを探している」──そんな方に、ぴったりのオープンチャットです。<br>
      ぜひ、あなたのペースで自由に言葉を交わし、心地よい雑談の場として活用してください。
      所属マークは＃翠<br>
-      <a href="https://line.me/ti/g2/2Vy_vc3JEG3VDhfru_QudhpbM6emeksiRA7Fmw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank">
-        翠颯組　オプチャリンク
-      </a><br><br>
 
-      皆さんの参加をお待ちしています！
-    </p>
-  </div>
+    <a href="https://line.me/ti/g2/2Vy_vc3JEG3VDhfru_QudhpbM6emeksiRA7Fmw" target="_blank">
+      翠颯組 オプチャリンク
+    </a><br><br>
 
-  <script>
-    function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      const main = document.getElementById("main");
+    皆さんの参加をお待ちしています！
+  </p>
+</div>
 
-      sidebar.classList.toggle("closed");
-      main.classList.toggle("shifted");
-    }
-  </script>
+</div>
 
-</body>
 <script>
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const main = document.getElementById("main");
+  sidebar.classList.toggle("closed");
+  main.classList.toggle("shifted");
+}
+
 function toggleTheme() {
   const current = document.documentElement.getAttribute("data-theme");
-
   if (current === "dark") {
     document.documentElement.setAttribute("data-theme", "light");
     localStorage.setItem("theme", "light");
@@ -258,9 +270,9 @@ function toggleTheme() {
   }
 }
 
-/* ページ読み込み時に前回の設定を反映 */
 const saved = localStorage.getItem("theme") || "light";
 document.documentElement.setAttribute("data-theme", saved);
 </script>
 
+</body>
 </html>
