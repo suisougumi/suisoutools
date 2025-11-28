@@ -1,84 +1,159 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>天河組ホームページ</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天河組ホームページ</title>
 
-  <style>
-    body { margin: 0; padding: 0; font-family: sans-serif; background: #ffffff; }
+<style>
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --subtext: #333333;
+  --link: #0066cc;
+  --link-hover: #004499;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #cccccc;
+  --button-bg: #eeeeee;
+  --button-text: #000000;
+  --button-border: #000000;
+}
 
-    .toggle-btn {
-      position: fixed;
-      left: 10px;
-      top: 10px;
-      background: #4a4aff;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 1001;
-      user-select: none;
-    }
+[data-theme="dark"] {
+  --bg: #000000;
+  --text: #e0e0e0;
+  --subtext: #d0d0d0;
+  --link: #b8e8ff;
+  --link-hover: #e5f8ff;
+  --sidebar-bg: #0a0a0a;
+  --sidebar-border: #222222;
+  --button-bg: #111111;
+  --button-text: #ffffff;
+  --button-border: #ffffff;
+}
 
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 200px;
-      height: 100%;
-      background: #ffffff;
-      padding: 20px;
-      box-sizing: border-box;
-      border-right: 1px solid #ccc;
-      transform: translateX(0);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
-    .sidebar.closed { transform: translateX(-220px); }
+.toggle-btn {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1001;
+}
 
-    .sidebar ul { list-style: none; padding: 0; margin: 50px 0 0 0; }
-    .sidebar li { display: flex; align-items: center; margin: 18px 0; font-size: 18px; }
+.toggle-theme-btn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 2000;
+}
 
-    .dot {
-      width: 15px; height: 15px;
-      margin-right: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: var(--sidebar-bg);
+  padding: 20px;
+  border-right: 1px solid var(--sidebar-border);
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
 
-    .pink { background: #f4b5c0; }
-    .green { background: #00ff00; }
-    .cyan { background: #00e6ff; }
-    .blue { background: #0077ff; }
-    .deepblue { background: #232c89; }
-    .purpleblue { background: #6641ff; }
-    .purple { background: #cc30ff; }
+.sidebar.closed {
+  transform: translateX(-220px);
+}
 
-    .sidebar a { text-decoration: none; color: #0000cc; }
-    .sidebar a:hover { text-decoration: underline; }
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 50px 0 0 0;
+}
 
-    .main {
-      margin-left: 220px;
-      padding: 20px;
-      transition: margin-left 0.3s;
-    }
+.sidebar li {
+  display: flex;
+  align-items: center;
+  margin: 18px 0;
+  font-size: 18px;
+}
 
-    .main.shifted { margin-left: 20px; }
+.dot {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
 
-    .header-image {
-      width: 100%;
-      max-width: 900px;
-      display: block;
-      margin: 0 auto 20px auto;
-    }
-  </style>
+.pink { background: #f4b5c0; }
+.green { background: #00ff00; }
+.cyan  { background: #00e6ff; }
+
+.sidebar a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  text-decoration: underline;
+}
+
+.main {
+  margin-left: 220px;
+  padding: 20px;
+  transition: margin-left 0.3s;
+}
+
+.main.shifted {
+  margin-left: 20px;
+}
+
+.header-image {
+  width: 100%;
+  max-width: 900px;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+p {
+  color: var(--subtext);
+  line-height: 1.7;
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+</style>
 </head>
 
 <body>
 
 <div class="toggle-btn" onclick="toggleSidebar()">≡ メニュー</div>
+<div class="toggle-theme-btn" onclick="toggleTheme()">ライトダーク切り替え</div>
 
 <div class="sidebar" id="sidebar">
   <ul>
@@ -88,51 +163,52 @@
 </div>
 
 <div class="main" id="main">
-
   <img src="tenga.png" class="header-image" alt="tenga group">
 
   <h1>天河組 - AMAKAWAGROUP</h1>
 
   <p>
-    みんなの恨みを晴らすオプ！依頼してくれたら行きます！＋雑談のオープンチャットへようこそ！<br>
-<br>
-オープンチャットの不満や、恨みつらみをスッキリ解消したいと思いませんか？<br>
-「誰かに聞いて貰うだけじゃ収まらない、」そんなときにピッタリの場所です！<br>
-もしあなたの依頼があれば、私、もしくはこの場所の仲間があなたの代わりに行って、恨みを晴らすお手伝いをします！<br>
-（もちろん冗談半分ですので、楽しく交流しましょうね）<br>
-<br>
-このチャットは、みんなが気軽に話せて、不満など思いのままに吐き出せる場所です。<br>
-オープンチャットのストレスを発散したいときやなどにぜひ参加してください。<br>
-<br>
-また、雑談や日常のいろんな話題について気軽に話し合える場でもあります。<br>
-趣味の話、面白い体験談、面白ニュース、何でもOK！<br>
-みんなで和気あいあいと楽しめる空間を作っていきましょう。<br>
-<br>
-【こんな人におすすめ】<br>
-<br>
-何かスッキリしたい！<br>
-オープンチャットの恨みを誰かに晴らしてほしい！<br>
-面白い話や雑談をいっぱいしたい！<br>
-一人じゃないって感じたい！<br>
-<br>
-気軽に参加して、仲間と一緒に楽しい時間を過ごしましょう！<br>
-所属マークは＃天河<br>
-みんなの参加を心からお待ちしています。<br>
-気になったら遠慮なく声をかけてくださいね！<br>
-<a href="https://line.me/ti/g2/hFnGNEwBi7YOD2bvcmioxW0h1vmiRtjvDI0KcA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank">
+    みんなの恨みを晴らすオプ！依頼してくれたら行きます！＋雑談のオープンチャットへようこそ！<br><br>
+
+    オープンチャットの不満や、恨みつらみをスッキリ解消したいと思いませんか？<br>
+    「誰かに聞いて貰うだけじゃ収まらない」そんなときにピッタリの場所です！<br><br>
+
+    このチャットは、みんなが気軽に話せて、不満など思いのままに吐き出せる場所です。<br>
+    雑談や日常の話題など何でもOK！<br><br>
+
+    【こんな人におすすめ】<br>
+    ・スッキリしたい！<br>
+    ・恨みを誰かに晴らしてほしい！<br>
+    ・雑談したい！<br>
+    ・仲間と過ごしたい！<br><br>
+
+    <a href="https://line.me/ti/g2/hFnGNEwBi7YOD2bvcmioxW0h1vmiRtjvDI0KcA" target="_blank">
       天河組 オプチャリンク
     </a>
-   </p>
+  </p>
 </div>
 
 <script>
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
   const main = document.getElementById("main");
-
   sidebar.classList.toggle("closed");
   main.classList.toggle("shifted");
 }
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  if (current === "dark") {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+const saved = localStorage.getItem("theme") || "light";
+document.documentElement.setAttribute("data-theme", saved);
 </script>
 
 </body>
