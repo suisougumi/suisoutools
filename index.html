@@ -48,6 +48,92 @@
       transform: translateX(-220px);
     }
 
+    /* =========================================
+   ライト & ダークテーマの切り替えCSS
+========================================= */
+
+/* 基本（ライトモード） */
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --subtext: #333333;
+  --link: #0066cc;
+  --link-hover: #004499;
+  --sidebar-bg: #f5f5f5;
+  --sidebar-border: #cccccc;
+  --button-bg: #eeeeee;
+  --button-text: #000000;
+  --button-border: #000000;
+}
+
+/* ここがダークモード */
+[data-theme="dark"] {
+  --bg: #000000;
+  --text: #e0e0e0;
+  --subtext: #d0d0d0;
+  --link: #b8e8ff;
+  --link-hover: #e5f8ff;
+  --sidebar-bg: #0a0a0a;
+  --sidebar-border: #222222;
+  --button-bg: #111111;
+  --button-text: #ffffff;
+  --button-border: #ffffff;
+}
+
+
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: sans-serif;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  color: var(--text);
+}
+
+p {
+  color: var(--subtext);
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+
+.sidebar {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  color: var(--text);
+}
+
+
+.sidebar a {
+  color: var(--text);
+}
+
+
+.toggle-theme-btn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 2000;
+  user-select: none;
+}
+
+    
     .sidebar ul {
       list-style: none;
       padding: 0;
@@ -124,6 +210,9 @@
     </ul>
   </div>
 
+<div class="toggle-theme-btn" onclick="toggleTheme()">ライトダーク切り替え</div>
+
+  
   <!-- メイン -->
   <div class="main" id="main">
     <img src="dantaigakirinuki.png" class="header-image" alt="Suisou group">
@@ -156,4 +245,22 @@
   </script>
 
 </body>
+<script>
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+
+  if (current === "dark") {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+/* ページ読み込み時に前回の設定を反映 */
+const saved = localStorage.getItem("theme") || "light";
+document.documentElement.setAttribute("data-theme", saved);
+</script>
+
 </html>
