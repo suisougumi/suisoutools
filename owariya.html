@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>検証中</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;height:100vh;display:grid;place-items:center;
+      background:#0b0b0b;color:#e6e6e6;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow:hidden
+    }
+    .card{
+      width:min(92vw,520px);padding:28px 26px 26px;border-radius:18px;
+      background:linear-gradient(180deg,#111,#0a0a0a);
+      box-shadow:0 20px 60px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.04)
+    }
+    h1{margin:0 0 10px;font-size:1.2rem;letter-spacing:.08em;color:#9ef}
+    .muted{opacity:.65;font-size:.9rem}
+    .bar{height:10px;border-radius:999px;background:#111;overflow:hidden;margin:16px 0}
+    .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6cf,#f6f);transition:width .25s}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:14px}
+    .btn{
+      padding:12px 18px;border-radius:999px;border:0;cursor:pointer;font-weight:600;
+      background:#1e1e1e;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)
+    }
+    .btn.primary{background:linear-gradient(135deg,#6cf,#f6f);color:#000}
+    .btn.evade{position:relative}
+    .toast{
+      position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+      background:#000;padding:10px 14px;border-radius:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,.6);font-size:.9rem;opacity:0;animation:up .4s forwards
+    }
+    @keyframes up{to{opacity:1;transform:translateX(-50%) translateY(-6px)}}
+    .overlay{
+      position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.88);
+      opacity:0;pointer-events:none;transition:opacity .4s
+    }
+    .overlay.show{opacity:1;pointer-events:auto}
+    .big{font-size:clamp(1.8rem,6vw,3rem);letter-spacing:.2em}
+    .blink{animation:blink 1.2s steps(1) infinite}
+    @keyframes blink{50%{opacity:.2}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>アクセス検証</h1>
+    <div class="muted">自動チェックを実行しています。しばらくお待ちください。</div>
+    <div class="bar"><i id="prog"></i></div>
+    
+  </div>
+
+  <div id="ov" class="overlay">
+    <div style="text-align:center;max-width:90vw">
+      <div class="big">特 定 完 了</div>
+      
+      <div id="profile" style="text-align:left;background:#000;border-radius:14px;padding:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)">
+        <div class="muted" style="margin-bottom:6px">取得情報（自動）</div>
+        <ul style="list-style:none;padding:0;margin:0;line-height:1.7">
+          <li>照合ステータス: <b>完了</b></li>
+          <li>ログID: <b id="logid">—</b></li>
+          <li>端末: <b id="ua">—</b></li>
+          <li>OS推定: <b id="os">—</b></li>
+          <li>画面: <b id="scr">—</b></li>
+          <li>言語: <b id="lang">—</b></li>
+          <li>タイムゾーン: <b id="tz">—</b></li>
+          <li>滞在時間: <b id="stay">—</b></li>
+          <li>信頼スコア: <b id="score">—</b></li>
+        </ul>
+        <div class="muted" style="margin-top:10px">　</div>
+         </div>
+    </div>
+  </div>
+      <div class="muted blink">loading...</div>
+    </div>
+  </div>
+
+  <script>
+  // ===== 最終・確実版（依存ゼロ） =====
+  // DOM取得
+  const bar = document.getElementById('prog');
+  const ov  = document.getElementById('ov');
+
+  // ガード（要素が無い場合でも落ちない）
+  if(!bar){ console.error('progress bar not found'); }
+
+  // 設定（無機質）
+  const TOTAL_MS = 11000;      // 全体 11秒
+  const HOLD_AT  = 85;         // 85%で停止
+  const HOLD_MS  = 2000;       // 停止 2秒
+
+  let startAt = null;
+  let holdStartedAt = null;
+  let releasedAt = null;
+  let done = false;
+
+  function frame(ts){
+    if(startAt === null) startAt = ts;
+
+    // 経過
+    const elapsed = ts - startAt;
+    let p;
+
+    // 85%まで
+    if(elapsed <= TOTAL_MS * (HOLD_AT/100)){
+      p = Math.floor((elapsed / TOTAL_MS) * 100);
+    } else {
+      // 85%到達後
+      if(holdStartedAt === null) holdStartedAt = ts;
+      const holdElapsed = ts - holdStartedAt;
+
+      if(holdElapsed < HOLD_MS){
+        p = HOLD_AT; // 停止
+      } else {
+        if(releasedAt === null) releasedAt = ts;
+        const post = ts - releasedAt;
+        // 一気に加速（0.5秒）
+        p = Math.min(100, HOLD_AT + Math.floor((post / 500) * (100 - HOLD_AT)));
+      }
+    }
+
+    if(bar) bar.style.width = Math.max(0, Math.min(100, p)) + '%';
+
+    if(p < 100){
+      requestAnimationFrame(frame);
+    } else if(!done){
+      done = true;
+      showResult();
+    }
+  }
+
+  // 結果表示（無機質）
+  async function showResult(){
+    if(showResult.done) return; // 二重実行防止
+    showResult.done = true;
+    ov.classList.add('show');
+
+    // ① 完全沈黙 2秒
+    await new Promise(r=>setTimeout(r,2000));
+
+    document.getElementById('ua').textContent = navigator.userAgent.split(')')[0] + ')';
+    document.getElementById('os').textContent = /(Windows|Mac|Linux|Android|iPhone|iPad)/.exec(navigator.userAgent)?.[1] || 'Unknown';
+    document.getElementById('scr').textContent = `${screen.width}×${screen.height}`;
+    document.getElementById('lang').textContent = navigator.language;
+    document.getElementById('tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    document.getElementById('stay').textContent = Math.round((performance.now())/1000) + ' 秒';
+    document.getElementById('logid').textContent = Math.random().toString(36).slice(2,10).toUpperCase();
+    document.getElementById('score').textContent = Math.max(1, 80 - Math.floor(Math.random()*20)) + ' / 100';
+
+    try{
+      const r = await fetch('https://api.ipify.org?format=json', {cache:'no-store'});
+      const j = await r.json();
+      const li = document.createElement('li');
+      li.innerHTML = `IPアドレス: <b>${j.ip}</b>`;
+      (function(){
+      const ul = document.querySelector('#profile ul');
+      // 既存のIP行があれば削除（増殖防止）
+      ul.querySelectorAll('li[data-ip]').forEach(n=>n.remove());
+      const li = document.createElement('li');
+      li.setAttribute('data-ip','1');
+      li.innerHTML = `IPアドレス: <b>${j ? j.ip : '取得失敗'}</b>`;
+      ul.prepend(li);
+    })();(li);
+    }catch{
+      const li = document.createElement('li');
+      li.innerHTML = 'IPアドレス: <b>取得失敗</b>';
+      (function(){
+      const ul = document.querySelector('#profile ul');
+      // 既存のIP行があれば削除（増殖防止）
+      ul.querySelectorAll('li[data-ip]').forEach(n=>n.remove());
+      const li = document.createElement('li');
+      li.setAttribute('data-ip','1');
+      li.innerHTML = `IPアドレス: <b>${j ? j.ip : '取得失敗'}</b>`;
+      ul.prepend(li);
+    })();(li);
+    }
+  }
+
+  // 離脱演出（仕様上不安定なのは前提）
+  window.addEventListener('beforeunload', e => {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  // 開始（DOM準備後に確実に）
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', ()=>requestAnimationFrame(frame));
+  }else{
+    requestAnimationFrame(frame);
+  }
+</script>
+</body>
+</html>
