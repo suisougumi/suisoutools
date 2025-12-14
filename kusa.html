@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>おバカさんへ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at top, #111 0%, #000 60%);
+      color: #f5f5f5;
+      font-family: 'Orbitron', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: 0.2em;
+      margin-bottom: 20px;
+      color: #ff003c;
+      text-shadow: 0 0 10px #ff003c, 0 0 30px #ff003c;
+    }
+
+    p {
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      opacity: 0.85;
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 16px 40px;
+      font-size: 1.1rem;
+      font-family: inherit;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff003c, #ff7a00);
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.6);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 40px rgba(255, 0, 60, 0.9);
+    }
+
+    .toast {
+      position: absolute;
+      bottom: 20px;
+      background: rgba(0,0,0,0.8);
+      border: 1px solid #ff003c;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      animation: slideUp 0.6s ease forwards;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>弱い。</h1>
+    <p>このページを開いた時点で、もう差はついてる。<BR>特定は完了したんだよ。</p>
+    <button onclick="taunt()">それでも押す？</button>
+  </div>
+
+  <script>
+    const messages = [
+      '今クリックしたよね？ そういうとこ。',
+      '考えてる時間、全部ムダ。',
+      'まだ理解してないのが伝わってくる。',
+      'その程度で満足してるの？',
+      '特定は終わったのに………',
+ '本当に哀れだね。',
+'……あ、やっぱ何も起きないと思った？'
+    ];
+
+    function taunt() {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = messages[Math.floor(Math.random() * messages.length)];
+      document.body.appendChild(toast);
+
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
