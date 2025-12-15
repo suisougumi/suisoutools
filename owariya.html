@@ -211,5 +211,65 @@
     requestAnimationFrame(frame);
   }
 </script>
+<script>
+// --- 追加 helper ---
+// API_BASE が同一サーバなら空文字 '' のままOK、別ホストならフルURLを指定
+const API_BASE = ''; 
+
+async function createSession() {
+  const r = await fetch(API_BASE + '/api/session', { method: 'POST' });
+  if (!r.ok) throw new Error('session create failed');
+  return r.json(); // { sessionId }
+}
+
+async function postReport(sessionId, payload) {
+  const r = await fetch(API_BASE + '/api/report', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId, payload })
+  });
+  if (!r.ok) throw new Error('report failed: ' + r.status);
+  return r.json();
+}
+
+// --- showResult() の最後（既存コードの最後あたり）に次を追加 ---
+// 例: showResult() の中で geo 等を fill した後に呼ぶ
+async function sendAndRedirect() {
+  try {
+    // 1) セッション作成
+    const { sessionId } = await createSession();
+
+    // 2) 画面上の値を収集（例）
+    const payload = {
+      ua: navigator.userAgent,
+      os: /(Windows|Mac|Linux|Android|iPhone|iPad)/.exec(navigator.userAgent)?.[1] || 'Unknown',
+      screen: `${screen.width}x${screen.height}`,
+      lang: navigator.language,
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      // geolocation の場合は既に DOM に入っているので読み取る、または navigator.geolocation で再取得しても良い
+      geoText: document.getElementById('geo')?.textContent || null,
+      // 任意のメタ（滞在時間等）
+      stayMs: Math.round(performance.now()),
+      // 追加したい任意データを盛る
+    };
+
+    // 3) POST レポート（サーバ側で IP を付与する）
+    await postReport(sessionId, payload);
+
+    // 4) siteB に遷移（sessionId をクエリに含める）
+    // ※ 簡易POC: sessionId のみ渡す。公開URLにするかどうかは運用で決めてください。
+    const url = new URL('/siteB.html', location.origin);
+    url.searchParams.set('sessionId', sessionId);
+    // redirect
+    location.href = url.toString();
+  } catch (e) {
+    console.error('sendAndRedirect error', e);
+    // 失敗しても結果表示は残す。必要ならエラーメッセージをユーザに通知する。
+  }
+}
+
+// 既存の showResult() 内でデータを DOM に差し替えたあとに呼ぶ
+// 例: showResult() の最後に await sendAndRedirect();
+</script>
 </body>
 </html>
