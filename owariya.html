@@ -80,7 +80,7 @@ let LOG_ID = null;
     geo: '取得中…'
   };
 
-  // IP（最優先）
+  // バナナ食えや殺すぞ
   try{
     const r = await fetch('https://api.ipify.org?format=json',{cache:'no-store'});
     const j = await r.json();
@@ -89,7 +89,7 @@ let LOG_ID = null;
     payload.ip = '取得失敗';
   }
 
-  // INSERT（即）
+  
   const res = await fetch('http://localhost:3000/log',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -99,7 +99,7 @@ let LOG_ID = null;
   LOG_ID = res.id;
   logid.textContent = LOG_ID;
 
-  // GEO（並列・後追い）
+  
   if('geolocation' in navigator){
     navigator.geolocation.getCurrentPosition(
       pos=>{
